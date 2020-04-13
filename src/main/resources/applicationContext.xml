@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 加载dbconfig.properties文件中的内容 -->
+	<context:property-placeholder location="classpath:dbconfig.properties"/>
+	
+	<!-- 设置注解扫描的包 -->
+	<context:component-scan base-package="com.kyle.demo">
+		<!-- 将controller注解排除在外，让springmvc.xml去扫描 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 配置spring的定时任务 -->
+	<task:executor id="myExecutor" pool-size="10" queue-capacity="100"/>
+	<task:scheduler id="myScheduler" pool-size="10"/>
+	<task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
+	
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClass}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${jdbc.initialSize}" /><!-- 配置初始化连接池数量-->  
+	    <property name="minIdle" value="${jdbc.minIdle}" /><!-- 配置最小连接池数量-->  
+	    <property name="maxActive" value="${jdbc.maxActive}" /><!-- 配置最大连接池数量-->  
+	    <property name="maxWait" value="${jdbc.maxWait}" /><!-- 配置获取连接等待超时的时间 单位毫秒-->  
+	    <property name="filters" value="${jdbc.filters}" /><!-- 配置监控统计拦截的filters，去掉后监控界面sql无法统计 -->  
+	</bean>
+	
+	
+	<!-- spring和mybatis进行整合 -->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mapperLocations" value="classpath*:mapper/*.xml" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+	</bean>
+	
+	
+	<!-- 查找Dao下的Mapper文件 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.kyle.demo.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" />
+	</bean>
+	
+	
+	<!-- 事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 基于注解的声明式事务管理 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+	
+	<!-- 直接配置的声明式事务管理 -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+		<tx:method name="insert*" propagation="REQUIRED" />
+		<tx:method name="append*" propagation="REQUIRED" />
+		<tx:method name="save*" propagation="REQUIRED" />
+		<tx:method name="submit*" propagation="REQUIRED"/>
+		<tx:method name="update*" propagation="REQUIRED" />
+		<tx:method name="modify*" propagation="REQUIRED" />
+		<tx:method name="edit*" propagation="REQUIRED" />
+		<tx:method name="delete*" propagation="REQUIRED" />
+
+		<tx:method name="get*" propagation="SUPPORTS" />
+		<tx:method name="find*" propagation="SUPPORTS" />
+		<tx:method name="load*" propagation="SUPPORTS" />
+		<tx:method name="search*" propagation="SUPPORTS" />
+		<tx:method name="*" propagation="SUPPORTS" />		
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		<aop:pointcut id="pointCut" expression="execution(* com.kyle.demo.service.impl.*.*(..))"  />
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="pointCut"/>
+	</aop:config>
+</beans>

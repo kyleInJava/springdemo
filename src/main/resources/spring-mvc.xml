@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"   
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd  
+        http://www.springframework.org/schema/context  
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd  
+        http://www.springframework.org/schema/mvc  
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- 注解驱动，以使得访问路径与方法的匹配可以通过注解配置 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+        		<property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                    </list>
+                </property>
+                <!-- 设置fastjson数据类型转换时的一些特性 -->
+                <property name="fastJsonConfig" ref="fastJsonConfig"/>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<bean name="fastJsonConfig" class="com.alibaba.fastjson.support.config.FastJsonConfig">
+		<property name="serializerFeatures">
+			<list>
+				<value>WriteMapNullValue</value>
+				<value>WriteNullNumberAsZero</value>
+				<value>WriteNullListAsEmpty</value>
+				<value>WriteNullStringAsEmpty</value>
+				<value>WriteNullBooleanAsFalse</value>
+				<value>WriteDateUseDateFormat</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 设置注解扫描包 -->
+	<context:component-scan base-package="com.kyle.demo.controller">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 不处理静态文件 -->
+	<mvc:default-servlet-handler />
+	
+	<!-- 激活代理功能，实现全局日志，
+	之所以在这个配置文件中配置是因为springmvc的子容器能够获取父容器中的 对象，反过来却不行。
+	-->
+	<aop:aspectj-autoproxy/> 
+	
+	<!-- 允许跨域请求， Spring MVC 从4.2版本开始支持如下配置 -->
+	<!-- <mvc:cors>
+        <mvc:mapping path="/**" allowed-origins="*" allow-credentials="true" max-age="1800"
+        allowed-methods="GET,POST,PUT,DELETE,PATCH,OPTIONS"/>
+    </mvc:cors> -->
+    
+    <!-- 使用自定义拦截器来配置允许跨域 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <!-- <mvc:exclude-mapping path="/user/index"/> -->
+            <bean class="com.kyle.demo.common.CrosInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+</beans>
