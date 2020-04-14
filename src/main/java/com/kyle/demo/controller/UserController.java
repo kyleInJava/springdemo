@@ -13,9 +13,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.kyle.demo.common.PageBean;
+import com.kyle.demo.entity.DUR;
 import com.kyle.demo.entity.User;
 import com.kyle.demo.service.UserService;
 import com.kyle.demo.util.ConvertUtil;
@@ -46,7 +46,7 @@ public class UserController {
     }
     
     @PostMapping("/get")
-    public User getUser(@RequestBody User user) {
+    public User getUser(@RequestBody @Validated({DUR.class})User user) {
     	System.out.println(user);
         return userService.getUser(user);
     }

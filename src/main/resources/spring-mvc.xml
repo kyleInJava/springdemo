@@ -14,7 +14,7 @@
 		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
 	<!-- 注解驱动，以使得访问路径与方法的匹配可以通过注解配置 -->
-	<mvc:annotation-driven>
+	<mvc:annotation-driven validator="validator">
 		<mvc:message-converters register-defaults="true">
 			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
         		<property name="supportedMediaTypes">
@@ -27,6 +27,11 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+	
+	<!-- 配置使用validator进行数据校验 -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+    </bean>
 	
 	<bean name="fastJsonConfig" class="com.alibaba.fastjson.support.config.FastJsonConfig">
 		<property name="serializerFeatures">
@@ -68,5 +73,6 @@
             <bean class="com.kyle.demo.common.CrosInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
+    
     
 </beans>

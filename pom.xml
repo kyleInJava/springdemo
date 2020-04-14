@@ -126,11 +126,19 @@
             <version>${dom4j.version}</version>
         </dependency>
         
+        <!-- java对象转xml -->
         <dependency>
 		    <groupId>com.fasterxml.jackson.dataformat</groupId>
 		    <artifactId>jackson-dataformat-xml</artifactId>
 		    <version>2.9.0</version>
 		</dependency>
+		
+		<!-- 对参数进行校验 -->
+		<dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.18.Final</version>
+        </dependency>
 		
 	</dependencies>
 

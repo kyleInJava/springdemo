@@ -11,7 +11,6 @@ public class CrosInterceptor implements HandlerInterceptor {
  
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse response, Object o) throws Exception {
-        System.out.println("添加跨域支持");
         //添加跨域CORS
         response.addHeader("Access-Control-Max-Age", "1800");//30 min
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -23,11 +22,9 @@ public class CrosInterceptor implements HandlerInterceptor {
  
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-        System.out.println("postHandle");
     }
  
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-        System.out.println("afterCompletion");
     }
 }

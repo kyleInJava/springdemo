@@ -35,10 +35,4 @@ public class PageUtil {
 	public static void startPage(int pageNum,int pageSize) {
 		PageHelper.startPage(pageNum,pageSize);
 	}
-	
-	
-	
-
-
-
 }
