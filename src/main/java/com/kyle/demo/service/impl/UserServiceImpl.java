@@ -64,4 +64,11 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
+	@Override
+	public boolean insert(List<User> users) {
+		userMapper.insert(users);
+		System.out.println(users);
+		return false;
+	}
+
 }

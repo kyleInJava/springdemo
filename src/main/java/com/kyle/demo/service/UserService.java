@@ -1,5 +1,6 @@
 package com.kyle.demo.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.kyle.demo.common.PageBean;
@@ -15,5 +16,7 @@ public interface UserService {
 	boolean update(User user);
 
 	boolean uupdate(User user);
+	
+	boolean insert(List<User> users);
 
 }

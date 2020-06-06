@@ -24,4 +24,11 @@
   	update  user set account = #{account} where id = #{id}
   </update>
   
+  <insert id="insert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+  	insert into user (account,password,email) values
+  	<foreach collection="list" item="user" separator=",">
+  		(#{user.account},#{user.password},#{user.email})
+  	</foreach>
+  </insert>
+  
 </mapper>

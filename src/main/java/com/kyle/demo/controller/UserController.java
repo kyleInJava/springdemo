@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +34,11 @@ import com.kyle.demo.util.ConvertUtil;
 
 @RestController
 @RequestMapping("user")
+@PropertySource("classpath:dbconfig.properties")
 public class UserController {
 	
+	@Autowired
+    Environment env;
 	
     @Autowired
     private UserService userService;
@@ -43,6 +50,22 @@ public class UserController {
     @GetMapping("/hello")
     public User getUser(String name ,int age) {
         return new User();
+    }
+    
+    @GetMapping("/add")
+    public boolean addUser() {
+    	List<User> users = new ArrayList<>();
+    	User user = new User();
+    	user.setAccount("123");
+    	user.setPassword("1234");
+    	user.setEmail("1313");
+    	User user2 = new User();
+    	user2.setAccount("123");
+    	user2.setPassword("1234");
+    	user2.setEmail("1313");
+    	users.add(user);
+    	users.add(user2);
+        return userService.insert(users);
     }
     
     @PostMapping("/get")
@@ -92,6 +115,11 @@ public class UserController {
     @PostMapping(value="/update2")
     public boolean update2(@RequestBody User user) {
     	return userService.uupdate(user);
+    }
+    
+    @GetMapping("config")
+    public String getConfig() {
+    	return env.getProperty("jdbc.driverClass");
     }
     
     //获取图形验证码

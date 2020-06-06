@@ -14,5 +14,7 @@ public interface UserMapper {
 	List<User> list();
 
 	int update(User user);
+	
+	void insert(List<User> users);
 
 }
