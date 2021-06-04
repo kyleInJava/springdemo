@@ -18,7 +18,7 @@
 		<fastjson.version>1.2.47</fastjson.version>
 		<pagehelper.version>4.0.0</pagehelper.version>
 		<lombok.version>1.18.0</lombok.version>
-		<httpclient.version>4.5.11</httpclient.version>
+		<httpclient.version>4.5.13</httpclient.version>
 		<dom4j.version>1.6.1</dom4j.version>
 	</properties>
 
